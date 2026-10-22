@@ -8,11 +8,11 @@ This repo is one of three. The data never leaves its source: the platform reache
 it through the Zetaris data harness, locally first, governed in place, and moves
 to cloud infrastructure only where compute demands it.
 
-| Repo                          | Contains                                                    |
-| ----------------------------- | ----------------------------------------------------------- |
-| **itoolbox-backend** (this)   | FastAPI service, Alembic migrations, the agent              |
-| `itoolbox-frontend`           | Next.js web app                                             |
-| `zetaris-platform`            | The Zetaris data harness: query engine, catalog, API        |
+| Repo | Contains |
+| --- | --- |
+| **itoolbox-backend** (this) | FastAPI service, Alembic migrations, the agent |
+| `itoolbox-frontend` | Next.js web app |
+| `itoolbox-zetaris-data-harness` | The Zetaris data harness: query engine, catalog, API |
 
 ---
 
@@ -56,18 +56,18 @@ The app uses **flat imports** (`from config import get_settings`), so it runs wi
 Zetaris first, then this stack. Each owns its compose project and ports:
 
 ```bash
-(cd ../zetaris-platform && docker compose up -d)   # ui :3001, api :8888
+(cd ../itoolbox-zetaris-data-harness && docker compose up -d)   # ui :3001, api :8888
 cp .env.example .env                               # then fill it in, see below
 docker compose up -d                               # postgres :5435, api :8100
 ```
 
-| Port | Service                      | Repo               |
-| ---- | ---------------------------- | ------------------ |
-| 8100 | platform API (`/docs`)       | itoolbox-backend   |
-| 5435 | Postgres (platform tables)   | itoolbox-backend   |
-| 3100 | web                          | itoolbox-frontend  |
-| 3001 | Zetaris UI                   | zetaris-platform   |
-| 8888 | Zetaris API                  | zetaris-platform   |
+| Port | Service | Repo |
+| --- | --- | --- |
+| 8100 | platform API (`/docs`) | itoolbox-backend |
+| 5435 | Postgres (platform tables) | itoolbox-backend |
+| 3100 | web | itoolbox-frontend |
+| 3001 | Zetaris UI | itoolbox-zetaris-data-harness |
+| 8888 | Zetaris API | itoolbox-zetaris-data-harness |
 
 Every port binds to `127.0.0.1`. Teammates reach the API through Tailscale Serve
 on the host, not through the LAN.

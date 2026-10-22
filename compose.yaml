@@ -2,7 +2,7 @@
 #
 # Plain Postgres for the platform's own tables (users, investigations) and the
 # API. Data the agent investigates is NOT here: it stays in its source databases
-# and is reached read-only through the Zetaris platform (../zetaris-platform),
+# and is reached read-only through the Zetaris platform (../itoolbox-zetaris-data-harness),
 # whose API this stack calls at host.docker.internal:8888.
 #
 # Usage:
@@ -12,7 +12,7 @@
 # on the host, which proxies to localhost; nothing here listens on the LAN.
 #
 # name: groups this project under "itoolbox" in Docker Desktop, next to nm-backend's
-# "backend" and zetaris-platform's "zetaris".
+# "backend" and itoolbox-zetaris-data-harness's "zetaris".
 name: itoolbox
 
 services:
