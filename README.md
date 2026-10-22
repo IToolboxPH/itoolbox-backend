@@ -1,1 +1,145 @@
 # itoolbox-backend
+
+**API services for the IToolbox Ecosystem Platform.**
+
+> One login, one dashboard, every tool.
+
+This repo is one of three. The data never leaves its source: the platform reaches
+it through the Zetaris data harness, locally first, governed in place, and moves
+to cloud infrastructure only where compute demands it.
+
+| Repo                          | Contains                                                    |
+| ----------------------------- | ----------------------------------------------------------- |
+| **itoolbox-backend** (this)   | FastAPI service, Alembic migrations, the agent              |
+| `itoolbox-frontend`           | Next.js web app                                             |
+| `zetaris-platform`            | The Zetaris data harness: query engine, catalog, API        |
+
+---
+
+## Tech stack
+
+| | |
+| --- | --- |
+| **Framework** | FastAPI (Python), served by Uvicorn (`--reload` in dev) |
+| **Validation / config** | Pydantic v2 (`pydantic[email]`), `pydantic-settings` |
+| **DB / ORM** | SQLAlchemy 2.0 async (`asyncpg`), plain Postgres via Docker locally |
+| **Migrations** | Alembic, run automatically on startup |
+| **Auth** | Local HS256 JWTs (`python-jose`, `bcrypt`); accounts provisioned by an admin |
+| **Data harness** | Zetaris platform API, read-only, over `httpx` |
+| **Models** | NVIDIA Nemotron and xAI Grok through the `openai` SDK (both are OpenAI-compatible); Anthropic Claude through the `anthropic` SDK |
+| **API contract** | FastAPI's OpenAPI schema, exported to `contract/openapi.api.json` and consumed by `itoolbox-frontend` via `openapi-typescript` |
+
+---
+
+## Layout
+
+```text
+apps/
+  api/            Platform API — auth, admin, harness, agent modules
+    modules/
+      auth/       Sign-in, current user, password change
+      admin/      User provisioning (admin only)
+      harness/    Zetaris client and the read-only SQL guard
+      agent/      The investigating agent: tools, model providers, event stream
+scripts/
+  export_openapi.py   Writes contract/openapi.api.json
+contract/         Generated OpenAPI schema — the API contract for itoolbox-frontend
+```
+
+The app uses **flat imports** (`from config import get_settings`), so it runs with
+`apps/api` as the working directory — it is not a package.
+
+---
+
+## Running locally
+
+Zetaris first, then this stack. Each owns its compose project and ports:
+
+```bash
+(cd ../zetaris-platform && docker compose up -d)   # ui :3001, api :8888
+cp .env.example .env                               # then fill it in, see below
+docker compose up -d                               # postgres :5435, api :8100
+```
+
+| Port | Service                      | Repo               |
+| ---- | ---------------------------- | ------------------ |
+| 8100 | platform API (`/docs`)       | itoolbox-backend   |
+| 5435 | Postgres (platform tables)   | itoolbox-backend   |
+| 3100 | web                          | itoolbox-frontend  |
+| 3001 | Zetaris UI                   | zetaris-platform   |
+| 8888 | Zetaris API                  | zetaris-platform   |
+
+Every port binds to `127.0.0.1`. Teammates reach the API through Tailscale Serve
+on the host, not through the LAN.
+
+The API container runs with `--reload` and `apps/api` bind-mounted, so edits take
+effect without a rebuild. Requirement changes need `docker compose up -d --build`.
+
+### `.env`
+
+| Setting | |
+| --- | --- |
+| `JWT_SECRET` | Required. `python -c "import secrets; print(secrets.token_urlsafe(48))"` |
+| `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` | First super_admin, created on startup while there are no users. Change the password after signing in. |
+| `ZETARIS_API_KEY` | The agent's key into Zetaris. Create one in Zetaris (`POST /api/v1.0/auth/api-key`) so this file never holds a Zetaris password. |
+| `NVIDIA_API_KEY`, `XAI_API_KEY`, `ANTHROPIC_API_KEY` | One per model. A model without its key stays in the picker, marked unavailable. |
+
+### Accounts
+
+There is no public sign-up. Sign in as the seeded super_admin, then create
+teammates' accounts with `POST /api/v1/admin/users` (roles: `admin`, `analyst`,
+`viewer`).
+
+---
+
+## The agent
+
+`POST /api/v1/agent/ask` investigates a question and streams every step as
+server-sent events: the agent's progress notes, each tool call, each query's
+rows, then a Markdown answer in which every claim cites the query behind it
+(`[E1]`, `[E2]`, ...). The event types and their order are documented in
+`apps/api/modules/agent/schemas.py`; the schema is `AgentEvent` in the contract.
+
+**Tools.** The agent has four, all through the harness: `list_sources`,
+`list_tables`, `describe_table`, `run_sql`. Every successful query becomes
+numbered evidence, stored with the investigation and replayable from
+`GET /api/v1/agent/investigations/{id}`.
+
+**Read-only by construction.** `run_sql` passes through
+`modules/harness/guard.py`, which refuses anything but a single SELECT before it
+reaches Zetaris; Zetaris's query endpoint refuses non-SELECT statements as well.
+
+**Models.** The picker offers:
+
+| id | Provider | Notes |
+| --- | --- | --- |
+| `nemotron` | NVIDIA, OpenAI-compatible API | Default. Model id in `NVIDIA_MODEL`. |
+| `grok` | xAI, OpenAI-compatible API | Model id in `XAI_MODEL`. |
+| `claude` | Anthropic | `claude-opus-5-5` with adaptive thinking at `ANTHROPIC_EFFORT`. Progress notes between tool calls stream as status events (`display: "updates"`), and server-side fallbacks (`fallbacks: "default"`) re-run a request the model's safety classifiers decline on Anthropic's recommended fallback model. |
+| `demo` | none | A scripted investigation over live data. Use it to build the UI without spending model credits. |
+
+`GET /api/v1/agent/models/{id}/check` asks the provider whether the key works and
+the configured model id exists; provider model lists change, so check after
+setting a key.
+
+---
+
+## The API contract
+
+`contract/openapi.api.json` is generated from the app and **committed**. It is the
+source of truth for the TypeScript types in `itoolbox-frontend`.
+
+```bash
+python scripts/export_openapi.py           # regenerate after changing routes or models
+python scripts/export_openapi.py --check   # CI guard: fails if the committed schema is stale
+```
+
+The exporter is hermetic: it injects placeholder settings and never connects to
+a database or to Zetaris. Without a local Python environment, run it in the image:
+
+```bash
+docker run --rm -v "$PWD:/repo" -w /repo itoolbox-api python scripts/export_openapi.py
+```
+
+Regenerate and commit whenever you change a route or a response model, then run
+`npm run gen:types` in `itoolbox-frontend`.

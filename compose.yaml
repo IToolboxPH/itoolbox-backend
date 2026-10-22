@@ -1,0 +1,81 @@
+# itoolbox-backend — local development stack
+#
+# Plain Postgres for the platform's own tables (users, investigations) and the
+# API. Data the agent investigates is NOT here: it stays in its source databases
+# and is reached read-only through the Zetaris platform (../zetaris-platform),
+# whose API this stack calls at host.docker.internal:8888.
+#
+# Usage:
+#   docker compose up -d          # postgres :5435 + api :8100
+#
+# Both ports bind to 127.0.0.1. Teammates reach the API through Tailscale Serve
+# on the host, which proxies to localhost; nothing here listens on the LAN.
+#
+# name: groups this project under "itoolbox" in Docker Desktop, next to nm-backend's
+# "backend" and zetaris-platform's "zetaris".
+name: itoolbox
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: itoolbox-postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5435}:5432"
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-itoolbox_db}"
+      POSTGRES_USER: "${POSTGRES_USER:-itoolbox}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-itoolbox}"
+    volumes:
+      - itoolbox_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-itoolbox} -d ${POSTGRES_DB:-itoolbox_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: apps/api
+      dockerfile: Dockerfile
+    container_name: itoolbox-api
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "127.0.0.1:${API_PORT:-8100}:8000"
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-itoolbox}:${POSTGRES_PASSWORD:-itoolbox}@postgres:5432/${POSTGRES_DB:-itoolbox_db}"
+      PLATFORM_ENV: "local"
+      # No default on purpose: a guessable secret would let anyone mint tokens.
+      JWT_SECRET: "${JWT_SECRET:?set JWT_SECRET in .env -- see .env.example}"
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-http://localhost:3100}"
+      SEED_ADMIN_EMAIL: "${SEED_ADMIN_EMAIL:-}"
+      SEED_ADMIN_PASSWORD: "${SEED_ADMIN_PASSWORD:-}"
+      SEED_ADMIN_NAME: "${SEED_ADMIN_NAME:-IToolbox Admin}"
+      # Data harness. The Zetaris API binds to the host's loopback; Docker Desktop
+      # routes host.docker.internal there.
+      ZETARIS_API_URL: "${ZETARIS_API_URL:-http://host.docker.internal:8888}"
+      ZETARIS_ORG_ID: "${ZETARIS_ORG_ID:-1}"
+      ZETARIS_API_KEY: "${ZETARIS_API_KEY:-}"
+      ZETARIS_USERNAME: "${ZETARIS_USERNAME:-}"
+      ZETARIS_PASSWORD: "${ZETARIS_PASSWORD:-}"
+      # Agent models. Unset keys leave that model listed but unavailable.
+      AGENT_DEFAULT_MODEL: "${AGENT_DEFAULT_MODEL:-nemotron}"
+      AGENT_ENABLE_DEMO: "${AGENT_ENABLE_DEMO:-true}"
+      NVIDIA_API_KEY: "${NVIDIA_API_KEY:-}"
+      NVIDIA_MODEL: "${NVIDIA_MODEL:-nvidia/nemotron-3-super-120b-a12b}"
+      XAI_API_KEY: "${XAI_API_KEY:-}"
+      XAI_MODEL: "${XAI_MODEL:-grok-4.6}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      ANTHROPIC_MODEL: "${ANTHROPIC_MODEL:-claude-opus-5-5}"
+      ANTHROPIC_EFFORT: "${ANTHROPIC_EFFORT:-high}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  itoolbox_pgdata:

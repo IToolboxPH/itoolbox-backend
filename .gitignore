@@ -1,0 +1,32 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Virtualenvs ──────────────────────────────────────────────────────────────
+# Deliberately broad, so no suffixed venv can ever be committed.
+.venv/
+.venv*/
+venv/
+env/
+ENV/
+
+# ── Secrets — never commit ───────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Build artifacts ──────────────────────────────────────────────────────────
+dist/
+build/
+*.log
+
+# ── IDE / OS ─────────────────────────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/
+*.swp
