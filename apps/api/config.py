@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     # ── Data harness: the Zetaris platform ────────────────────────────────────
     # The agent reaches data only through Zetaris, never through a database
-    # driver of its own. Locally Zetaris runs from ../itoolbox-zetaris-data-harness; inside
+    # driver of its own. Locally Zetaris runs from ../itoolbox-zetaris-platform; inside
     # compose its API is at host.docker.internal:8888.
     zetaris_api_url: str = "http://localhost:8888"
     zetaris_org_id: int = 1

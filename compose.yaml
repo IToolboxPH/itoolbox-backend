@@ -2,7 +2,7 @@
 #
 # Plain Postgres for the platform's own tables (users, investigations) and the
 # API. Data the agent investigates is NOT here: it stays in its source databases
-# and is reached read-only through the Zetaris platform (../itoolbox-zetaris-data-harness),
+# and is reached read-only through the Zetaris platform (../itoolbox-zetaris-platform),
 # whose API this stack calls at host.docker.internal:8888.
 #
 # Usage:
@@ -11,12 +11,15 @@
 # Both ports bind to 127.0.0.1. Teammates reach the API through Tailscale Serve
 # on the host, which proxies to localhost; nothing here listens on the LAN.
 #
-# name: groups this project under "itoolbox" in Docker Desktop, next to nm-backend's
-# "backend" and itoolbox-zetaris-data-harness's "zetaris".
-name: itoolbox
+# name: Docker Desktop lists the IToolbox stacks together, apart from PLDT/Smart's,
+# by the "itoolbox_" prefix: itoolbox_frontend, itoolbox_data-platform,
+# itoolbox_zetaris-platform and itoolbox_backend. Each repo is its own project, so
+# `docker compose down` here never touches the others. Services are named after
+# their containers.
+name: itoolbox_backend
 
 services:
-  postgres:
+  itoolbox-postgres:
     image: postgres:16
     container_name: itoolbox-postgres
     restart: unless-stopped
@@ -34,17 +37,18 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+  itoolbox-api:
     build:
       context: apps/api
       dockerfile: Dockerfile
+    image: itoolbox-api
     container_name: itoolbox-api
     restart: unless-stopped
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "127.0.0.1:${API_PORT:-8100}:8000"
     environment:
-      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-itoolbox}:${POSTGRES_PASSWORD:-itoolbox}@postgres:5432/${POSTGRES_DB:-itoolbox_db}"
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-itoolbox}:${POSTGRES_PASSWORD:-itoolbox}@itoolbox-postgres:5432/${POSTGRES_DB:-itoolbox_db}"
       PLATFORM_ENV: "local"
       # No default on purpose: a guessable secret would let anyone mint tokens.
       JWT_SECRET: "${JWT_SECRET:?set JWT_SECRET in .env -- see .env.example}"
@@ -74,8 +78,11 @@ services:
     volumes:
       - ./apps/api:/app
     depends_on:
-      postgres:
+      itoolbox-postgres:
         condition: service_healthy
 
 volumes:
   itoolbox_pgdata:
+    # Pinned to the name it got under the old "itoolbox" project, which holds the data.
+    # Compose warns that it "was created for project itoolbox"; that is expected.
+    name: itoolbox_itoolbox_pgdata
