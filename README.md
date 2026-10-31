@@ -4,16 +4,37 @@
 
 > One login, one dashboard, every tool.
 
-This repo is one of three. The data never leaves its source: the platform reaches
+This repo is one of four. The data never leaves its source: the platform reaches
 it through the Zetaris data harness, locally first, governed in place, and moves
 to cloud infrastructure only where compute demands it.
 
 | Repo | Contains |
 | --- | --- |
-| **itoolbox-backend** (this) | FastAPI service, Alembic migrations, the agent |
+| **itoolbox-backend** (this) | FastAPI service, Alembic migrations, the BantAI agent |
 | `itoolbox-frontend` | Next.js web app |
 | `itoolbox-zetaris-platform` | The Zetaris data harness: query engine, catalog, API |
-| `itoolbox-data-platform` | TimescaleDB and JupyterLab for analysis |
+| `itoolbox-data-platform` | TimescaleDB, JupyterLab and the ingestion jobs that load BantAI's data |
+
+---
+
+## BantAI
+
+Project BantAI, from *bantay* ("guard"), was built with a clear purpose: to make
+information accessible, responses faster, and conversations more meaningful.
+
+- **Empowering the public and private sector**
+- **Timely information**
+- **Enhancing human engagement**
+
+| Pillar | What it does | Status |
+| --- | --- | --- |
+| **AI Knowledge Base with the Conversational Agent** | BantAI as an AI chat assistant: empowers teams with AI-driven insights to accelerate response times | Built: `modules/agent` |
+| **BantAI Intelligent Workflow Automation** | Intelligent workflow orchestration and automation | Planned |
+| **BantAI Strategic Intelligence** | Predictive insights and automated reports: advanced intelligence, predictive analytics and automated insights | Planned |
+
+BantAI's data so far is `WEATHER`, loaded hourly from OpenWeather by
+`itoolbox-data-platform`. The public sources to add next, from PAGASA, DOST, LGUs
+and others, are in that repo's `DATA_SOURCES.md`.
 
 ---
 
@@ -96,7 +117,7 @@ teammates' accounts with `POST /api/v1/admin/users` (roles: `admin`, `analyst`,
 
 ---
 
-## The agent
+## The agent: BantAI
 
 `POST /api/v1/agent/ask` investigates a question and streams every step as
 server-sent events: the agent's progress notes, each tool call, each query's

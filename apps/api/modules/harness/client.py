@@ -1,6 +1,6 @@
 """Client for the Zetaris platform API — the data harness.
 
-Everything the agent knows about the network comes through here: which sources
+Everything the agent knows about the data comes through here: which sources
 exist, what their tables and columns are, and the rows a SELECT returns. Zetaris
 federates the queries to the real databases, so nothing is copied out of them.
 
@@ -20,6 +20,7 @@ Every call carries X-Request-ID (a fresh UUID) and X-Org-ID.
 from __future__ import annotations
 
 import asyncio
+import re
 import time
 import uuid
 from typing import Any
@@ -41,6 +42,52 @@ class ZetarisError(Exception):
     def __init__(self, message: str, status_code: int | None = None):
         super().__init__(message)
         self.status_code = status_code
+
+
+_LITERAL = re.compile(r"'(?:[^']|'')*'|`[^`]*`")
+_NAME = r"(?:`([^`]+)`|\"([^\"]+)\"|(\w+))"
+_COLUMN = re.compile(rf"^(?:\w+\.)*{_NAME}$")
+_ALIAS = re.compile(rf"(?:\bAS\s+|\s){_NAME}\s*$", re.IGNORECASE)
+
+
+def _select_names(sql: str) -> list[str]:
+    """Output column names of the outermost SELECT, in order, as far as a light scan can tell.
+
+    Zetaris returns each row as a JSON object whose key order is not the SELECT's, and
+    sends no column list, so the order is recovered from the query text. A name it
+    cannot work out (SELECT *, an unaliased expression) just isn't listed.
+    """
+    masked = _LITERAL.sub(lambda m: "_" * len(m.group()), sql)
+    depth, start, end = 0, None, len(masked)
+    for m in re.finditer(r"[()]|\bselect\b|\bfrom\b", masked, re.IGNORECASE):
+        token = m.group().lower()
+        if token == "(":
+            depth += 1
+        elif token == ")":
+            depth -= 1
+        elif depth == 0 and token == "select" and start is None:
+            start = m.end()
+        elif depth == 0 and token == "from" and start is not None:
+            end = m.start()
+            break
+    if start is None:
+        return []
+    items, depth, last = [], 0, start
+    for i in range(start, end):
+        ch = masked[i]
+        depth += ch == "("
+        depth -= ch == ")"
+        if ch == "," and depth == 0:
+            items.append(sql[last:i])
+            last = i + 1
+    items.append(sql[last:end])
+    names = []
+    for item in items:
+        item = re.sub(r"^\s*(?:distinct|all)\s+", "", item.strip(), flags=re.IGNORECASE)
+        match = _COLUMN.match(item) or _ALIAS.search(item)
+        if match:
+            names.append(next(g for g in match.groups() if g is not None))
+    return names
 
 
 def _error_text(resp: httpx.Response) -> str:
@@ -238,6 +285,12 @@ class ZetarisClient:
 
         records = records[:max_rows]
         columns = list(records[0].keys()) if records else []
+        # Back into SELECT order. Each value stays under its own key whatever the order,
+        # and the sort is stable, so columns the scan couldn't name keep Zetaris's order.
+        position: dict[str, int] = {}
+        for i, name in enumerate(_select_names(statement)):
+            position.setdefault(name.lower(), i)
+        columns.sort(key=lambda c: position.get(c.lower(), len(position)))
         return QueryResult(
             sql=statement,
             columns=columns,

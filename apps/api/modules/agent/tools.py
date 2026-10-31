@@ -31,7 +31,7 @@ def _object(properties: dict[str, Any], required: list[str]) -> dict[str, Any]:
     return {"type": "object", "properties": properties, "required": required, "additionalProperties": False}
 
 
-_SOURCE = {"type": "string", "description": "Data source name, for example NM_RAN"}
+_SOURCE = {"type": "string", "description": "Data source name, for example WEATHER"}
 
 TOOL_SPECS: tuple[ToolSpec, ...] = (
     ToolSpec(
@@ -48,14 +48,14 @@ TOOL_SPECS: tuple[ToolSpec, ...] = (
         "describe_table",
         "List a table's columns with their types and any catalog descriptions.",
         _object(
-            {"source": _SOURCE, "table": {"type": "string", "description": "Table name, for example site_outages"}},
+            {"source": _SOURCE, "table": {"type": "string", "description": "Table name, for example forecasts"}},
             ["source", "table"],
         ),
     ),
     ToolSpec(
         "run_sql",
         "Run one read-only Spark SQL query (SELECT, or WITH ... SELECT) through Zetaris. Reference "
-        "tables as SOURCE.table, for example NM_RAN.sites. The result gets an evidence id, like E3, "
+        "tables as SOURCE.table, for example WEATHER.forecasts. The result gets an evidence id, like E3, "
         "that the answer must cite.",
         _object(
             {

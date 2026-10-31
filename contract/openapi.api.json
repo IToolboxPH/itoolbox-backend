@@ -1224,7 +1224,7 @@
     }
   },
   "info": {
-    "description": "Backend for the IToolbox Ecosystem Platform.\n\n**Modules:**\n- **Auth / Admin**: local JWT sign-in; accounts are provisioned by an admin\n- **Data Harness**: governed, read-only access to live data through the Zetaris platform (sources, tables, columns, SELECT queries); nothing is copied out of the source databases\n- **Agent**: investigates network questions and explains why, citing the queries behind every claim; Nemotron, Grok or Claude, picked per question\n\n**API route prefixes:** `/api/v1/auth` \u00b7 `/api/v1/admin` \u00b7 `/api/v1/harness` \u00b7 `/api/v1/agent`",
+    "description": "Backend for the IToolbox Ecosystem Platform.\n\n**Modules:**\n- **Auth / Admin**: local JWT sign-in; accounts are provisioned by an admin\n- **Data Harness**: governed, read-only access to live data through the Zetaris platform (sources, tables, columns, SELECT queries); nothing is copied out of the source databases\n- **Agent (BantAI)**: answers questions from live data and explains why, citing the queries behind every claim; Nemotron, Grok or Claude, picked per question\n\n**API route prefixes:** `/api/v1/auth` \u00b7 `/api/v1/admin` \u00b7 `/api/v1/harness` \u00b7 `/api/v1/agent`",
     "title": "IToolbox Platform API",
     "version": "0.1.0"
   },

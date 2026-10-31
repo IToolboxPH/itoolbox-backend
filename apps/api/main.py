@@ -74,8 +74,8 @@ app = FastAPI(
         "- **Auth / Admin**: local JWT sign-in; accounts are provisioned by an admin\n"
         "- **Data Harness**: governed, read-only access to live data through the Zetaris platform "
         "(sources, tables, columns, SELECT queries); nothing is copied out of the source databases\n"
-        "- **Agent**: investigates network questions and explains why, citing the queries behind every "
-        "claim; Nemotron, Grok or Claude, picked per question\n\n"
+        "- **Agent (BantAI)**: answers questions from live data and explains why, citing the queries "
+        "behind every claim; Nemotron, Grok or Claude, picked per question\n\n"
         "**API route prefixes:** `/api/v1/auth` · `/api/v1/admin` · `/api/v1/harness` · `/api/v1/agent`"
     ),
     version=VERSION,

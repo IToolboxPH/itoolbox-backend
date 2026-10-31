@@ -12,20 +12,26 @@ from modules.agent.providers.base import AgentOutcome
 from modules.agent.schemas import StatusEvent
 from modules.agent.tools import Emit, Toolbox
 
-_CAUSES_SQL = """\
-SELECT COALESCE(cause_of_outage, 'unrecorded') AS cause, COUNT(DISTINCT site_code) AS sites_affected
-FROM NM_RAN.site_outages
-WHERE snapshot_time >= date_sub(current_date(), 7)
-GROUP BY COALESCE(cause_of_outage, 'unrecorded')
-ORDER BY sites_affected DESC
+_RAIN_AHEAD_SQL = """\
+SELECT l.name AS city, l.province,
+       ROUND(SUM(COALESCE(f.rain_3h_mm, 0)), 1) AS rain_next_48h_mm,
+       ROUND(MAX(f.rain_prob), 2) AS max_rain_prob
+FROM WEATHER.forecasts f
+JOIN WEATHER.locations l ON f.location_id = l.location_id
+WHERE f.forecast_for > current_timestamp()
+  AND f.forecast_for <= current_timestamp() + INTERVAL 48 HOURS
+GROUP BY l.name, l.province
+ORDER BY rain_next_48h_mm DESC
 LIMIT 10"""
 
-_AVAILABILITY_SQL = """\
-SELECT province, ROUND(AVG(cell_availability_pct), 2) AS avg_5g_availability_pct, COUNT(*) AS days
-FROM NM_RAN.kpi_5g_province_daily
-WHERE day >= date_sub(current_date(), 7)
-GROUP BY province
-ORDER BY avg_5g_availability_pct ASC
+_RAIN_NOW_SQL = """\
+SELECT l.name AS city, l.province,
+       date_format(from_utc_timestamp(o.observed_at, 'Asia/Manila'), 'yyyy-MM-dd HH:mm') AS observed_pht,
+       o.description, ROUND(COALESCE(o.rain_1h_mm, 0), 1) AS rain_1h_mm, ROUND(o.temp_c, 1) AS temp_c
+FROM WEATHER.observations o
+JOIN WEATHER.locations l ON o.location_id = l.location_id
+WHERE o.observed_at >= current_timestamp() - INTERVAL 2 HOURS
+ORDER BY rain_1h_mm DESC, o.observed_at DESC
 LIMIT 10"""
 
 
@@ -33,42 +39,52 @@ def _call_id() -> str:
     return f"demo_{uuid.uuid4().hex[:12]}"
 
 
+def _first_row(evidence) -> dict | None:
+    """The top row by column name, so the wording never depends on column order."""
+    if not evidence or not evidence.rows:
+        return None
+    return dict(zip(evidence.columns, evidence.rows[0]))
+
+
 class DemoAgent:
     async def run(self, question: str, toolbox: Toolbox, emit: Emit) -> AgentOutcome:
         await emit(StatusEvent(text=(
-            "Demo mode: no language model is called. Running a fixed check of the last 7 days "
-            "of outages and 5G availability."
+            "Demo mode: no language model is called. Running a fixed check of where rain is "
+            "forecast in the next 48 hours and where it is raining now."
         )))
         await toolbox.run(_call_id(), "list_sources", {})
-        await toolbox.run(_call_id(), "describe_table", {"source": "NM_RAN", "table": "site_outages"})
 
-        await emit(StatusEvent(text="Checking which outage causes affected the most sites this week."))
+        await emit(StatusEvent(text="Adding up the forecast rain per city for the next 48 hours."))
         await toolbox.run(_call_id(), "run_sql", {
-            "sql": _CAUSES_SQL, "purpose": "Outage causes by number of sites affected, last 7 days",
+            "sql": _RAIN_AHEAD_SQL, "purpose": "Forecast rain per city, next 48 hours",
         })
-        await emit(StatusEvent(text="Comparing 5G availability by province over the same week."))
+        await emit(StatusEvent(text="Checking the latest observations for rain falling now."))
         await toolbox.run(_call_id(), "run_sql", {
-            "sql": _AVAILABILITY_SQL, "purpose": "Provinces with the lowest 5G cell availability, last 7 days",
+            "sql": _RAIN_NOW_SQL, "purpose": "Rain observed in the last hour, per city",
         })
 
-        causes, availability = (toolbox.evidence + [None, None])[:2]
+        ahead, now = (toolbox.evidence + [None, None])[:2]
+        top, wet = _first_row(ahead), _first_row(now)
         lines = [f"_Demo answer: the queries are live, the wording is a template. You asked: “{question}”_", ""]
-        if causes and causes.rows:
-            top = causes.rows[0]
+        if top:
             lines.append(
-                f"**Answer**: The most common outage cause in the last 7 days was **{top[0]}**, "
-                f"affecting {top[1]} sites [E1]."
+                f"**Answer**: The most rain forecast in the next 48 hours is in **{top['city']}, "
+                f"{top['province']}**, with {top['rain_next_48h_mm']} mm [E1]."
             )
         else:
-            lines.append("**Answer**: No outages were recorded in the last 7 days [E1].")
-        if availability and availability.rows:
-            low = availability.rows[0]
-            lines.append(f"The lowest average 5G availability was in **{low[0]}** at {low[1]}% [E2].")
+            lines.append("**Answer**: No forecast is loaded for the next 48 hours [E1].")
+        if wet and float(wet["rain_1h_mm"] or 0) > 0:
+            lines.append(
+                f"The heaviest rain right now is in **{wet['city']}**: {wet['description']}, "
+                f"{wet['rain_1h_mm']} mm in the last hour [E2]."
+            )
+        elif now:
+            lines.append("No city reported rain in the latest observations [E2].")
         lines += [
             "",
             "**Evidence**:",
-            "- Outage causes by sites affected [E1]",
-            "- 5G availability by province [E2]",
+            "- Forecast rain per city, next 48 hours [E1]",
+            "- Rain observed in the last hour [E2]",
             "",
             "**Confidence**: not applicable; this is the scripted demo.",
             "",
