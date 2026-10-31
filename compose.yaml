@@ -11,9 +11,9 @@
 # Both ports bind to 127.0.0.1. Teammates reach the API through Tailscale Serve
 # on the host, which proxies to localhost; nothing here listens on the LAN.
 #
-# name: Docker Desktop lists the IToolbox stacks together, apart from PLDT/Smart's,
-# by the "itoolbox_" prefix: itoolbox_frontend, itoolbox_data-platform,
-# itoolbox_zetaris-platform and itoolbox_backend. Each repo is its own project, so
+# name: Docker Desktop lists the IToolbox stacks together by the "itoolbox_" prefix:
+# itoolbox_frontend, itoolbox_data-platform, itoolbox_zetaris-platform and
+# itoolbox_backend. Each repo is its own project, so
 # `docker compose down` here never touches the others. Services are named after
 # their containers.
 name: itoolbox_backend
