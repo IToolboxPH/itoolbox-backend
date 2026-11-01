@@ -92,8 +92,11 @@ docker compose up -d                               # postgres :5435, api :8100
 | 3100 | web | itoolbox-frontend |
 | 3001 | Zetaris UI | itoolbox-zetaris-platform |
 | 8888 | Zetaris API | itoolbox-zetaris-platform |
-| 5436 | TimescaleDB (analysis) | itoolbox-data-platform |
+| 5436 | TimescaleDB (BantAI's data) | itoolbox-data-platform |
 | 8890 | JupyterLab | itoolbox-data-platform |
+| 3200 | BagyoAPI (PAGASA bulletins) | itoolbox-data-platform |
+| 8088 | Meterless Nightshift, if installed | the host |
+
 Every port binds to `127.0.0.1`. Teammates reach the API through Tailscale Serve
 on the host, not through the LAN.
 
@@ -147,6 +150,26 @@ reaches Zetaris; Zetaris's query endpoint refuses non-SELECT statements as well.
 `GET /api/v1/agent/models/{id}/check` sends the model one tiny real request, so
 it also catches a valid key on an account without credits. Run it after setting
 a key; it costs a few tokens.
+
+### Nemotron through Meterless
+
+[Meterless](https://meterless.ai) Nightshift is a desktop runtime: it runs on the
+host, holds the provider keys, and serves an OpenAI-compatible API on
+`127.0.0.1:8088`. Every reply carries a receipt naming the model that answered. To
+switch it on:
+
+1. Install Nightshift from meterless.ai on the machine running this stack (it needs
+   Windows for desktop control; the API works anywhere it runs). Keep it open.
+2. In Nightshift's **Providers** tab, add the NVIDIA key from build.nvidia.com.
+3. In its **Console**, copy the runtime token into `.env` as
+   `METERLESS_RUNTIME_TOKEN`. Optionally set `METERLESS_MODEL`; it defaults to the
+   same Nemotron as `NVIDIA_MODEL`.
+4. `docker compose up -d itoolbox-api` (a container reads `.env` only when created).
+5. Check it with `GET /api/v1/agent/models/meterless/check`, then pick
+   **Nemotron via Meterless** in the picker.
+
+The API reaches Nightshift at `host.docker.internal:8088` and sends
+`meterless-app: bantai` with each request.
 
 ---
 
