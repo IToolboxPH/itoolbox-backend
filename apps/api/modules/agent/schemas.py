@@ -34,7 +34,7 @@ class AskRequest(BaseModel):
 class ModelInfo(_Out):
     id: str
     label: str
-    provider: Literal["nvidia", "xai", "anthropic", "demo"]
+    provider: Literal["nvidia", "meterless", "openai", "xai", "anthropic"]
     model: str
     # Credentials are configured. Whether the provider accepts them is what
     # GET /models/{id}/check answers.

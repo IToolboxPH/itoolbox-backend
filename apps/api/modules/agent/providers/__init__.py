@@ -12,8 +12,7 @@ def build_agent(option: ModelOption, settings: Settings) -> Agent:
     if option.provider == "anthropic":
         from modules.agent.providers.anthropic_agent import AnthropicAgent
         return AnthropicAgent(option, settings)
-    if option.provider in ("nvidia", "xai"):
+    if option.provider in ("nvidia", "meterless", "openai", "xai"):
         from modules.agent.providers.openai_compat_agent import OpenAICompatAgent
         return OpenAICompatAgent(option, settings)
-    from modules.agent.providers.demo_agent import DemoAgent
-    return DemoAgent()
+    raise ValueError(f"No agent for provider '{option.provider}'")

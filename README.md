@@ -134,18 +134,19 @@ numbered evidence, stored with the investigation and replayable from
 `modules/harness/guard.py`, which refuses anything but a single SELECT before it
 reaches Zetaris; Zetaris's query endpoint refuses non-SELECT statements as well.
 
-**Models.** The picker offers:
+**Models.** Every option is a real LLM; there is no scripted agent. The picker offers:
 
 | id | Provider | Notes |
 | --- | --- | --- |
 | `nemotron` | NVIDIA, OpenAI-compatible API | Default. Model id in `NVIDIA_MODEL`. |
+| `meterless` | NVIDIA Nemotron through [Meterless](https://meterless.ai) Nightshift | Nightshift is a desktop runtime on this machine serving an OpenAI-compatible API on `127.0.0.1:8088`. It holds the NVIDIA key; the API sends `METERLESS_RUNTIME_TOKEN` and `meterless-app: bantai`. Model id in `METERLESS_MODEL`. |
+| `gpt` | OpenAI | Model id in `OPENAI_MODEL`. |
 | `grok` | xAI, OpenAI-compatible API | Model id in `XAI_MODEL`. |
 | `claude` | Anthropic | `claude-opus-5-5` with adaptive thinking at `ANTHROPIC_EFFORT`. Progress notes between tool calls stream as status events (`display: "updates"`), and server-side fallbacks (`fallbacks: "default"`) re-run a request the model's safety classifiers decline on Anthropic's recommended fallback model. |
-| `demo` | none | A scripted investigation over live data. Use it to build the UI without spending model credits. |
 
-`GET /api/v1/agent/models/{id}/check` asks the provider whether the key works and
-the configured model id exists; provider model lists change, so check after
-setting a key.
+`GET /api/v1/agent/models/{id}/check` sends the model one tiny real request, so
+it also catches a valid key on an account without credits. Run it after setting
+a key; it costs a few tokens.
 
 ---
 

@@ -722,9 +722,10 @@
           "provider": {
             "enum": [
               "nvidia",
+              "meterless",
+              "openai",
               "xai",
-              "anthropic",
-              "demo"
+              "anthropic"
             ],
             "title": "Provider",
             "type": "string"

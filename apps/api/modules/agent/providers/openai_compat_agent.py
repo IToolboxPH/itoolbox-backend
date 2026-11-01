@@ -1,7 +1,7 @@
-"""Nemotron (NVIDIA) and Grok (xAI), through the OpenAI SDK.
+"""Nemotron (NVIDIA, direct or through Meterless), GPT (OpenAI) and Grok (xAI).
 
-Both providers serve OpenAI-compatible chat completions with function calling,
-so one loop covers them; only the base URL, key and model id differ.
+All of them serve OpenAI-compatible chat completions with function calling, so
+one loop covers them; only the base URL, key, model id and headers differ.
 """
 from __future__ import annotations
 
@@ -32,7 +32,10 @@ class OpenAICompatAgent:
         self._label = option.label
         self._model = option.model
         self._max_steps = settings.agent_max_steps
-        self._client = openai.AsyncOpenAI(api_key=option.api_key, base_url=option.base_url, timeout=180, max_retries=2)
+        self._client = openai.AsyncOpenAI(
+            api_key=option.api_key, base_url=option.base_url, timeout=180, max_retries=2,
+            default_headers=dict(option.headers),
+        )
         self._tools = [
             {"type": "function", "function": {"name": s.name, "description": s.description, "parameters": s.parameters}}
             for s in TOOL_SPECS

@@ -46,14 +46,25 @@ class Settings(BaseSettings):
     # Rows shown to the model per query, and rows kept as evidence for the UI.
     agent_model_row_limit: int = 50
     agent_evidence_row_limit: int = 200
-    # "Demo (no LLM)": a scripted investigation over live data, for building the
-    # UI without spending model credits.
-    agent_enable_demo: bool = True
+
+    # Every model is a real LLM from a provider; there is no scripted agent.
 
     # NVIDIA Nemotron — OpenAI-compatible API (build.nvidia.com).
     nvidia_api_key: str = ""
     nvidia_base_url: str = "https://integrate.api.nvidia.com/v1"
-    nvidia_model: str = "nvidia/nemotron-3-super-120b-a12b"
+    nvidia_model: str = "nvidia/nemotron-3.5-super-vl-120b-a12b"
+
+    # Nemotron through Meterless Nightshift, the desktop runtime on this machine.
+    # Nightshift holds the NVIDIA key itself; the agent sends only its runtime
+    # token (Nightshift's Console). Inside compose the host is host.docker.internal.
+    meterless_runtime_token: str = ""
+    meterless_base_url: str = "http://127.0.0.1:8088/v1"
+    meterless_model: str = "nvidia/nemotron-3.5-super-vl-120b-a12b"
+
+    # OpenAI GPT — the model id is whatever platform.openai.com/docs/models lists.
+    openai_api_key: str = ""
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_model: str = "gpt-5.5"
 
     # xAI Grok — OpenAI-compatible API.
     xai_api_key: str = ""
