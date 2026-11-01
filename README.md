@@ -34,8 +34,24 @@ information accessible, responses faster, and conversations more meaningful.
 
 BantAI reads five public sources through Zetaris: `WEATHER`, `BULLETINS`, `HAZARDS`,
 `TYPHOONS` and `REFERENCE`, all loaded and governed by `itoolbox-data-platform`
-(its README lists every table). [docs/DEMO.md](docs/DEMO.md) is the guide to
-recording the demo video, with tested questions.
+(its README lists every table).
+
+### Status (1 November 2026)
+
+| Part | State |
+| --- | --- |
+| Agent on NVIDIA Nemotron | Working. Cross-source answers with cited evidence in 20–50 s |
+| Zetaris | Five sources, 21 tables, read-only role; `verify.sh` 9/9 |
+| Data | All nine ingestion jobs running on schedule; PAGASA bulletins through a self-hosted BagyoAPI |
+| Nemotron via Meterless | Built; waits for Meterless Nightshift to be installed and `METERLESS_RUNTIME_TOKEN` set |
+| OpenAI GPT | Built; needs `OPENAI_API_KEY` |
+| xAI Grok, Anthropic Claude | Keys set; both accounts need API credits |
+| Web app | Live on the host (port 3100, Tailscale for the team); accounts for every teammate |
+
+**Docs:**
+
+- [docs/DEMO.md](docs/DEMO.md) is how to record and present the demo.
+- [docs/SUBMISSION.md](docs/SUBMISSION.md) holds the texts for the Open Agent Hackathon and the Zetaris Demo Challenge.
 
 ---
 

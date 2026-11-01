@@ -43,7 +43,19 @@ PSGC · PSA · OpenStreetMap ────┘   one governed schema per source   
    Every job should show a recent "last ok".
 3. **The model answers.** `GET /api/v1/agent/models/nemotron/check` (admin) should return `ok: true`.
 4. **Warm it up.** After an idle spell, Nemotron's first answer can take about a minute. Ask one question before you start recording.
-5. **Have a fallback.** Every run is saved. `/bantai?id=<id>` replays a run step by step, which makes a smooth take if a live run is slow.
+5. **Have a fallback.** Every run is saved, and `/bantai?id=<id>` replays one step by step. That makes a smooth take if a live run is slow. A replay opens only for the account that ran it, or an admin.
+6. **Record as the demo account.** `demo@example.com` ("BantAI Demo", analyst) keeps everyone's real names and emails off screen.
+7. **Expect the Zetaris UI to be slower than the API.** The cross-source query below takes about 3 s through the API BantAI uses, but about 20 s in the SQL Workspace. Speed up that wait in the edit and keep the "Query Time" visible.
+8. **Show the proof afterwards.** After a live BantAI run, open Zetaris **Management → API Tokens**: the `itoolbox-agent` key's "Last used" time shows the agent's queries just went through Zetaris.
+
+## The finished videos
+
+The 1 November 2026 cuts are in `C:\IToolbox\videos\`. They were made from live screen recordings of this stack, with captions and synthetic narration (Kokoro text-to-speech). [SUBMISSION.md](SUBMISSION.md) has the texts that go with them.
+
+| File | For | Length |
+| --- | --- | --- |
+| `IToolbox_011126.mp4` | Zetaris Demo Challenge: Zetaris live, plus the 40–60 s "why it was amazing" segment | about 3½ min |
+| `BantAI_OpenAgentHackathon2026_demo.mp4` | Open Agent Hackathon 2026 submission | under 4 min |
 
 ## Questions that work (tested 1 November 2026, Nemotron)
 
@@ -67,7 +79,7 @@ Both of the first two show what Track 02 rewards. In the Inday run, BantAI found
 | 2:50–3:15 | The trail's SQL and the security page | Every query is checked as a single SELECT before it reaches Zetaris. Zetaris reads through a read-only role. The data is governed locally, and BantAI defers life-safety calls to PAGASA, NDRRMC and the LGU. |
 | 3:15–3:30 | The landing page's three pillars | BantAI today is the AI knowledge base and conversational agent. Next come workflow automation and strategic intelligence, on the same governed sources. |
 
-The cross-source query for the Zetaris editor (tested: about 2 s):
+The cross-source query for the Zetaris editor (about 3 s through the API, about 20 s in the SQL Workspace):
 
 ```sql
 SELECT c.pagasa_name AS storm, b.bulletin_number, w.signal_level,
