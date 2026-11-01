@@ -36,13 +36,13 @@ sooner.
 
 **Team Name:** IToolbox
 
-**Description** (1,747 characters; the form allows 150 to 2,000. Paste the four paragraphs without the `>` marks):
+**Description** (1,755 characters; the form allows 150 to 2,000. Paste the four paragraphs without the `>` marks):
 
 > BantAI (from bantay, Filipino for "guard") is IToolbox's AI assistant for Philippine teams who must act when a typhoon threatens. About 20 tropical cyclones enter Philippine waters every year, and the answers a team needs are scattered: PAGASA bulletins, Project NOAH hazard maps, PSA population figures and 75 years of storm history. BantAI answers in English or Filipino, and it explains why: every claim cites the exact query and rows behind it.
 >
 > Public data lands in our local data platform and is governed there, one schema per source. The Zetaris AI Data Harness registers five data sources (WEATHER, BULLETINS, HAZARDS, TYPHOONS, REFERENCE; 21 tables) and federates read-only Spark SQL across them. The agent, on NVIDIA Nemotron, never opens a database connection: it discovers the sources, writes each query with a stated purpose, runs it through Zetaris and turns each result into numbered evidence (E1, E2…). A guard lets only a single SELECT reach Zetaris, which reads through a read-only role.
 >
-> Asked which areas had the highest wind signal in Typhoon Inday's latest bulletin, BantAI noticed the final bulletin carried no signals, went back to the last one that did, and joined the signals to PSA population, citing six queries. Asked how exposed Tacloban is, it combined NOAH storm-surge zones, 346 storm passes since 1951 and Haiyan's 35 km pass, and fixed a failed query on its own.
+> Asked which areas had the highest wind signal in Typhoon Inday's latest bulletin, BantAI noticed the final bulletin carried no signals, went back to the last one that did, and joined the signals to PSA population; when Zetaris rejected one query, it read the error and fixed it. Asked how exposed Tacloban is, it combined NOAH storm-surge zones, 346 storm passes since 1951 and Haiyan's 35 km pass.
 >
 > Sources: OpenWeather and NASA POWER weather, PAGASA bulletins via a self-hosted BagyoAPI, USGS earthquakes, GDACS alerts, Project NOAH hazard maps, IBTrACS storm tracks, PSA population and OpenStreetMap facilities, all public and refreshed on schedules. BantAI supports decisions and defers life-safety calls to PAGASA, NDRRMC and local government.
 
