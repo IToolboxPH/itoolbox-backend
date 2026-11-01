@@ -32,9 +32,10 @@ information accessible, responses faster, and conversations more meaningful.
 | **BantAI Intelligent Workflow Automation** | Intelligent workflow orchestration and automation | Planned |
 | **BantAI Strategic Intelligence** | Predictive insights and automated reports: advanced intelligence, predictive analytics and automated insights | Planned |
 
-BantAI's data so far is `WEATHER`, loaded hourly from OpenWeather by
-`itoolbox-data-platform`. The public sources to add next, from PAGASA, DOST, LGUs
-and others, are in that repo's `DATA_SOURCES.md`.
+BantAI reads five public sources through Zetaris: `WEATHER`, `BULLETINS`, `HAZARDS`,
+`TYPHOONS` and `REFERENCE`, all loaded and governed by `itoolbox-data-platform`
+(its README lists every table). [docs/DEMO.md](docs/DEMO.md) is the guide to
+recording the demo video, with tested questions.
 
 ---
 
