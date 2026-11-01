@@ -53,7 +53,9 @@ is_current, countries, report_url)
   - city_hazard: Project NOAH hazard around each city (location_id, hazard flood/landslide/\
 debris_flow/storm_surge, scenario 5yr/25yr/100yr for floods, ssa1 to ssa4 for storm surge, any \
 otherwise; level_at_center and max_level_1km where 0 none, 1 low, 2 medium, 3 high; \
-pct_medium_high_2km and pct_high_2km, the share of a 2 km disc around the city)
+pct_medium_high_2km and pct_high_2km, the share of a 2 km disc around the city). NOAH has \
+gaps: a layer missing for a province reads as 0, so compare a hazard's scenarios before calling \
+a place safe.
 - TYPHOONS, IBTrACS history of storms in PAR since 1951 (international names; winds in knots):
   - storms (sid, season, name, entered_par_at, left_par_at, max_wind_kt_in_par, \
 min_pressure_hpa_in_par, max_category_in_par, over_ph_land)
