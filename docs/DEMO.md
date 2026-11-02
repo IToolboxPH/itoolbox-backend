@@ -54,7 +54,7 @@ The 1 November 2026 cuts are in `C:\IToolbox\videos\`. They were made from live 
 
 | File | For | Length |
 | --- | --- | --- |
-| `IToolbox_011126.mp4` | Zetaris Demo Challenge: Zetaris live, plus the 40–60 s "why it was amazing" segment | about 3½ min |
+| `IToolbox_021126.mp4` | Zetaris Demo Challenge: Zetaris live, plus the 40–60 s "why it was amazing" segment | about 3½ min |
 | `BantAI_OpenAgentHackathon2026_demo.mp4` | Open Agent Hackathon 2026 submission | under 4 min |
 
 ## Questions that work (tested 1 November 2026, Nemotron)

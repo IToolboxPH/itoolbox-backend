@@ -7,7 +7,7 @@ sooner.
 | --- | --- | --- |
 | **Deadline** | **Mon 2 Nov 2026, 23:45 UTC** (Tue 3 Nov, 7:45 AM PHT) per the [official rules](https://www.zetaris.com/zetaris-demo-challenge-official-rules); the announcement says 3 Nov, so aim for the earlier | 27 Oct 2026, passed; we are asking the organisers whether they accept a late entry |
 | **Where** | Upload the video to the organisers' Dropbox (link in the official rules) | [hackathon.genai.works/submissions](https://hackathon.genai.works/submissions) |
-| **Video** | `C:\IToolbox\videos\IToolbox_011126.mp4` (Zetaris live, with the 40–60 s "why it was amazing" segment) | `C:\IToolbox\videos\BantAI_OpenAgentHackathon2026_demo.mp4` (under 4 minutes) |
+| **Video** | `C:\IToolbox\videos\IToolbox_021126.mp4` (Zetaris live, with the 40–60 s "why it was amazing" segment) | `C:\IToolbox\videos\BantAI_OpenAgentHackathon2026_demo.mp4` (under 4 minutes) |
 
 ## Before you submit
 
@@ -26,7 +26,7 @@ sooner.
    scores "How it helped you" at 15 points, so consider recording the 40–60 s "why"
    segment in your own voice, over the same slides. Its script is below.
 4. **File name.** The Zetaris rules want `TEAM-NAME_DDMMYY` with the upload date.
-   Rename `IToolbox_011126.mp4` if you upload on another day.
+   Rename `IToolbox_021126.mp4` if you upload on another day.
 
 ---
 
@@ -64,7 +64,7 @@ sooner.
 
 ## Zetaris Demo Challenge
 
-**What to upload:** `IToolbox_011126.mp4`, renamed to the upload date, and the one-sentence write-up below (the rules don't say where it goes, so put it in a text file with the same name next to the video; it is also on the video's end card).
+**What to upload:** `IToolbox_021126.mp4`, renamed to the upload date, and the one-sentence write-up below (the rules don't say where it goes, so put it in a text file with the same name next to the video; it is also on the video's end card).
 
 **In one sentence, why did you think it was amazing?**
 
