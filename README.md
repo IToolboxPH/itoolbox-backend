@@ -36,14 +36,14 @@ BantAI reads five public sources through Zetaris: `WEATHER`, `BULLETINS`, `HAZAR
 `TYPHOONS` and `REFERENCE`, all loaded and governed by `itoolbox-data-platform`
 (its README lists every table).
 
-### Status (1 November 2026)
+### Status (2 November 2026)
 
 | Part | State |
 | --- | --- |
 | Agent on NVIDIA Nemotron | Working. Cross-source answers with cited evidence in 20–50 s |
 | Zetaris | Five sources, 21 tables, read-only role; `verify.sh` 9/9 |
 | Data | All nine ingestion jobs running on schedule; PAGASA bulletins through a self-hosted BagyoAPI |
-| Nemotron via Meterless | Built; waits for Meterless Nightshift to be installed and `METERLESS_RUNTIME_TOKEN` set |
+| Nemotron via Meterless | Working. Meterless Nightshift 1.2.7 on the host routes each call to Nemotron 3.5 Lightning and signs a receipt for it. Fast, but weaker than the direct route on multi-step questions |
 | OpenAI GPT | Built; needs `OPENAI_API_KEY` |
 | xAI Grok, Anthropic Claude | Keys set; both accounts need API credits |
 | Web app | Live on the host (port 3100, Tailscale for the team); accounts for every teammate |
@@ -159,7 +159,7 @@ reaches Zetaris; Zetaris's query endpoint refuses non-SELECT statements as well.
 | id | Provider | Notes |
 | --- | --- | --- |
 | `nemotron` | NVIDIA, OpenAI-compatible API | Default. Model id in `NVIDIA_MODEL`. |
-| `meterless` | NVIDIA Nemotron through [Meterless](https://meterless.ai) Nightshift | Nightshift is a desktop runtime on this machine serving an OpenAI-compatible API on `127.0.0.1:8088`. It holds the NVIDIA key; the API sends `METERLESS_RUNTIME_TOKEN` and `meterless-app: bantai`. Model id in `METERLESS_MODEL`. |
+| `meterless` | NVIDIA Nemotron through [Meterless](https://meterless.ai) Nightshift | Nightshift is a desktop runtime on this machine serving an OpenAI-compatible API on `127.0.0.1:8088`. It holds the NVIDIA key; the API sends `METERLESS_RUNTIME_TOKEN` and `meterless-app: bantai`. Model id in `METERLESS_MODEL` (Nemotron 3.5 Lightning by default). |
 | `gpt` | OpenAI | Model id in `OPENAI_MODEL`. |
 | `grok` | xAI, OpenAI-compatible API | Model id in `XAI_MODEL`. |
 | `claude` | Anthropic | `claude-opus-5-5` with adaptive thinking at `ANTHROPIC_EFFORT`. Progress notes between tool calls stream as status events (`display: "updates"`), and server-side fallbacks (`fallbacks: "default"`) re-run a request the model's safety classifiers decline on Anthropic's recommended fallback model. |
@@ -172,21 +172,28 @@ a key; it costs a few tokens.
 
 [Meterless](https://meterless.ai) Nightshift is a desktop runtime: it runs on the
 host, holds the provider keys, and serves an OpenAI-compatible API on
-`127.0.0.1:8088`. Every reply carries a receipt naming the model that answered. To
-switch it on:
+`127.0.0.1:8088`. It signs a receipt for every call, tagged with the app that made
+it. To switch it on:
 
-1. Install Nightshift from meterless.ai on the machine running this stack (it needs
-   Windows for desktop control; the API works anywhere it runs). Keep it open.
-2. In Nightshift's **Providers** tab, add the NVIDIA key from build.nvidia.com.
-3. In its **Console**, copy the runtime token into `.env` as
-   `METERLESS_RUNTIME_TOKEN`. Optionally set `METERLESS_MODEL`; it defaults to the
-   same Nemotron as `NVIDIA_MODEL`.
+1. Install Nightshift from meterless.ai on the machine running this stack. Keep it open.
+2. In Nightshift's **Setup → Providers → Cloud provider keys**, add the NVIDIA key
+   from build.nvidia.com.
+3. Copy the runtime token into `.env` as `METERLESS_RUNTIME_TOKEN`. It is in
+   Nightshift's **Console**, and on Windows in
+   `%LOCALAPPDATA%\ai.meterless.runtime\proxy-token`.
 4. `docker compose up -d itoolbox-api` (a container reads `.env` only when created).
 5. Check it with `GET /api/v1/agent/models/meterless/check`, then pick
    **Nemotron via Meterless** in the picker.
 
+`METERLESS_MODEL` defaults to `nvidia/nemotron-3.5-lightning-30b-a3b`. Nightshift
+1.2.7 holds back Nemotron 3.5 Super VL, the direct route's model, after failed calls
+in its own tests, and Nemotron 3 Ultra took over two minutes to its first tool call
+on NVIDIA's free tier. Nightshift's `GET /v1/models` lists the ids it serves.
+
 The API reaches Nightshift at `host.docker.internal:8088` and sends
-`meterless-app: bantai` with each request.
+`meterless-app: bantai` with each request, plus `meterless-ttfb-ms: 120000`:
+Nightshift otherwise stops a cloud call whose first token is slower than its default
+limit.
 
 ---
 

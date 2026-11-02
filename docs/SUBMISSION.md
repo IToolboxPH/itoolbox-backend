@@ -14,9 +14,9 @@ sooner.
 1. **GitHub link.** The four repos are public. The form takes one link, so give
    itoolbox-backend (BantAI's agent); its README links the other three.
 2. **Meterless.** The hackathon rules ask for Zetaris *and* Meterless. BantAI's
-   Meterless route is built, but it only runs once Nightshift is installed on the
-   laptop and its runtime token is in `itoolbox-backend/.env`. The steps are in the
-   README.
+   Meterless route is live: Nightshift runs on the laptop with the NVIDIA key, and
+   **Nemotron via Meterless** works in the picker. Keep Nightshift open whenever you
+   demo that route.
 3. **The narration is synthetic** (Kokoro text-to-speech). The Zetaris challenge
    scores "How it helped you" at 15 points, so consider recording the 40–60 s "why"
    segment in your own voice, over the same slides. Its script is below.
@@ -47,7 +47,7 @@ sooner.
 >
 > **Zetaris.** The Zetaris AI Data Harness is the only way BantAI reaches data. We run the Zetaris bundle locally in Docker and registered five data sources over governed TimescaleDB schemas through a read-only role. Our backend calls the Zetaris REST API (start, page, close) with the agent's own API key, behind a single-SELECT guard. What is unique: every Zetaris query becomes a citation the user can open with its SQL and rows; one federated query joins PAGASA wind signals to PSA population and NOAH hazard; and when we replaced our first data sources, the agent did not change, only the sources registered in Zetaris did.
 >
-> **Meterless.** BantAI has a model route through Meterless Nightshift: the backend calls Nightshift's local OpenAI-compatible endpoint with its runtime token and `meterless-app: bantai` headers, so Nemotron calls are routed and receipted by Nightshift, which holds the NVIDIA key. *(Before submitting: install Nightshift and set the token so this route is live, or say that it is built but not yet enabled.)*
+> **Meterless.** BantAI's second model route runs through Meterless Nightshift on the same laptop. The backend calls Nightshift's local OpenAI-compatible endpoint with its runtime token and the header `meterless-app: bantai`. Nightshift holds the NVIDIA key, sends each call to Nemotron 3.5 Lightning on build.nvidia.com, and signs a receipt for every call. Nightshift also shaped our model choice: it holds back Nemotron 3.5 Super VL after failed calls in its own tests, and Nemotron 3 Ultra took over two minutes to its first tool call, so we pinned Lightning, which starts each agent step in seconds.
 >
 > **SpaceX AI.** Grok is integrated through the xAI API as a selectable model in the same picker and agent loop as Nemotron, Claude and GPT. *(It needs API credits on the xAI team account to run.)*
 

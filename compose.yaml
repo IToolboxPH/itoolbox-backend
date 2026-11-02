@@ -70,7 +70,7 @@ services:
       # Meterless Nightshift runs on the host, on its loopback port 8088.
       METERLESS_RUNTIME_TOKEN: "${METERLESS_RUNTIME_TOKEN:-}"
       METERLESS_BASE_URL: "${METERLESS_BASE_URL:-http://host.docker.internal:8088/v1}"
-      METERLESS_MODEL: "${METERLESS_MODEL:-nvidia/nemotron-3.5-super-vl-120b-a12b}"
+      METERLESS_MODEL: "${METERLESS_MODEL:-nvidia/nemotron-3.5-lightning-30b-a3b}"
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
       OPENAI_MODEL: "${OPENAI_MODEL:-gpt-5.5}"
       XAI_API_KEY: "${XAI_API_KEY:-}"

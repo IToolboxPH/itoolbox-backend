@@ -40,8 +40,10 @@ def model_options(settings: Settings | None = None) -> list[ModelOption]:
         ),
         ModelOption(
             "meterless", "Nemotron via Meterless", "meterless", s.meterless_model, s.meterless_runtime_token,
-            s.meterless_base_url, note="Routed by Meterless Nightshift on this machine; needs Nightshift running.",
-            headers=(("meterless-app", "bantai"), ("meterless-scope", "user")),
+            s.meterless_base_url, note="Routed and receipted by Meterless Nightshift on this machine; needs Nightshift running.",
+            # meterless-ttfb-ms: Nightshift stops a lane that sends no first token
+            # within its cloud limit; an agent step with tool results can take longer.
+            headers=(("meterless-app", "bantai"), ("meterless-scope", "user"), ("meterless-ttfb-ms", "120000")),
         ),
         ModelOption("gpt", "OpenAI GPT", "openai", s.openai_model, s.openai_api_key, s.openai_base_url),
         ModelOption("grok", "xAI Grok", "xai", s.xai_model, s.xai_api_key, s.xai_base_url),

@@ -57,9 +57,12 @@ class Settings(BaseSettings):
     # Nemotron through Meterless Nightshift, the desktop runtime on this machine.
     # Nightshift holds the NVIDIA key itself; the agent sends only its runtime
     # token (Nightshift's Console). Inside compose the host is host.docker.internal.
+    # Nightshift 1.2.7 holds back nemotron-3.5-super-vl (a quality hold), so this
+    # route uses Nemotron 3.5 Lightning, which starts a step in seconds; Nemotron 3
+    # Ultra took 2.5 minutes to its first tool call. Ids: Nightshift's GET /v1/models.
     meterless_runtime_token: str = ""
     meterless_base_url: str = "http://127.0.0.1:8088/v1"
-    meterless_model: str = "nvidia/nemotron-3.5-super-vl-120b-a12b"
+    meterless_model: str = "nvidia/nemotron-3.5-lightning-30b-a3b"
 
     # OpenAI GPT — the model id is whatever platform.openai.com/docs/models lists.
     openai_api_key: str = ""

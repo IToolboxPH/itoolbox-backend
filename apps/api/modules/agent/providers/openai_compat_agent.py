@@ -81,6 +81,9 @@ class OpenAICompatAgent:
             raise ProviderError(f"{self._label} API error {exc.status_code}: {exc.message}", "provider_error")
         except openai.APIConnectionError:
             raise ProviderError(f"Cannot reach the {self._label} API.", "provider_unreachable")
+        except openai.APIError as exc:
+            # An error event inside the stream, e.g. Meterless stopping a lane.
+            raise ProviderError(f"{self._label} error: {exc.message}", "provider_error")
 
         ordered = [calls[i] for i in sorted(calls)]
         for call in ordered:
