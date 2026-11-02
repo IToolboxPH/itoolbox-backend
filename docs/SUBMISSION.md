@@ -11,13 +11,8 @@ sooner.
 
 ## Before you submit
 
-1. **GitHub link.** All four repos are private, so judges can't open them. Making one
-   public as it is would also publish its history, which still names the PLDT tables
-   we started with. The safe route is a new public repo, `IToolboxPH/bantai`, holding
-   a clean snapshot of the four repos in one commit:
-   - no history;
-   - no `.env` files;
-   - none of Zetaris's licensed bundle files, such as its JDBC driver and images.
+1. **GitHub link.** The four repos are public. The form takes one link, so give
+   itoolbox-backend (BantAI's agent); its README links the other three.
 2. **Meterless.** The hackathon rules ask for Zetaris *and* Meterless. BantAI's
    Meterless route is built, but it only runs once Nightshift is installed on the
    laptop and its runtime token is in `itoolbox-backend/.env`. The steps are in the
@@ -58,7 +53,7 @@ sooner.
 
 **Video:** upload `BantAI_OpenAgentHackathon2026_demo.mp4`, or an unlisted YouTube link to it.
 
-**Github Solution:** the public repo from step 1 above, once created (for example `https://github.com/IToolboxPH/bantai`).
+**Github Solution:** `https://github.com/IToolboxPH/itoolbox-backend`. The other three are `https://github.com/IToolboxPH/itoolbox-frontend`, `https://github.com/IToolboxPH/itoolbox-data-platform` and `https://github.com/IToolboxPH/itoolbox-zetaris-platform`.
 
 ---
 

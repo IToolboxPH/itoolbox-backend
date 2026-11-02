@@ -1,6 +1,5 @@
 """Local auth — passwords hashed into user_credentials, HS256 JWTs signed with
-settings.jwt_secret. Same shape as nm-backend's PLATFORM_ENV=local path; no
-Supabase project is involved.
+settings.jwt_secret. No external identity provider is involved.
 """
 from __future__ import annotations
 

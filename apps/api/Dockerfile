@@ -1,7 +1,7 @@
 # apps/api — IToolbox platform API
 #
 # For local compose. A cloud deploy would build this service from source with
-# its own buildCommand, the same way nm-backend's render.yaml does.
+# its own build command.
 
 FROM python:3.11-slim
 
