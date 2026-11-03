@@ -5,9 +5,9 @@ sooner.
 
 | | Zetaris Demo Challenge | Open Agent Hackathon 2026 |
 | --- | --- | --- |
-| **Deadline** | **Mon 2 Nov 2026, 23:45 UTC** (Tue 3 Nov, 7:45 AM PHT) per the [official rules](https://www.zetaris.com/zetaris-demo-challenge-official-rules); the announcement says 3 Nov, so aim for the earlier | 27 Oct 2026, passed; we are asking the organisers whether they accept a late entry |
-| **Where** | Upload the video to the organisers' Dropbox (link in the official rules) | [hackathon.genai.works/submissions](https://hackathon.genai.works/submissions) |
-| **Video** | `C:\IToolbox\videos\IToolbox_021126.mp4` (Zetaris live, with the 40–60 s "why it was amazing" segment) | `C:\IToolbox\videos\BantAI_OpenAgentHackathon2026_demo.mp4` (under 4 minutes) |
+| **Deadline** | The [official rules](https://www.zetaris.com/zetaris-demo-challenge-official-rules) say "Tue 2 Nov, 23:45 UTC", but 2 Nov 2026 is a Monday; the announcement says 3 Nov, 23:45 UTC | 27 Oct 2026, passed; we are asking the organisers whether they accept a late entry |
+| **Where** | The rules' "Submit your video" Dropbox link is deleted: Dropbox shows "This link has been deleted" (checked 2 Nov, 16:34 UTC; screenshot in `C:\IToolbox\videos`). Email the entry to info@zetaris.com with a share link to the video, and upload as well if they post a new link | [hackathon.genai.works/submissions](https://hackathon.genai.works/submissions) |
+| **Video** | `C:\IToolbox\videos\IToolbox_031126.mp4` (Zetaris live, with the 40–60 s "why it was amazing" segment) | `C:\IToolbox\videos\BantAI_OpenAgentHackathon2026_demo.mp4` (under 4 minutes) |
 
 ## Before you submit
 
@@ -21,7 +21,9 @@ sooner.
    scores "How it helped you" at 15 points, so consider recording the 40–60 s "why"
    segment in your own voice, over the same slides. Its script is below.
 4. **File name.** The Zetaris rules want `TEAM-NAME_DDMMYY` with the upload date.
-   Rename `IToolbox_021126.mp4` if you upload on another day.
+   `IToolbox_031126.mp4` carries 3 Nov; rename it if you send it on another day.
+   Send the MP4, not a `.mov` export of the hackathon cut: that cut has no "why"
+   segment, and the rules don't judge entries without one.
 
 ---
 
@@ -59,7 +61,7 @@ sooner.
 
 ## Zetaris Demo Challenge
 
-**What to upload:** `IToolbox_021126.mp4`, renamed to the upload date, and the one-sentence write-up below (the rules don't say where it goes, so put it in a text file with the same name next to the video; it is also on the video's end card).
+**What to upload:** `IToolbox_031126.mp4` and the one-sentence write-up below (the rules don't say where it goes, so it is in `IToolbox_031126.txt` next to the video; it is also on the video's end card).
 
 **In one sentence, why did you think it was amazing?**
 
