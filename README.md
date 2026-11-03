@@ -36,7 +36,7 @@ BantAI reads five public sources through Zetaris: `WEATHER`, `BULLETINS`, `HAZAR
 `TYPHOONS` and `REFERENCE`, all loaded and governed by `itoolbox-data-platform`
 (its README lists every table).
 
-### Status (2 November 2026)
+### Status (3 November 2026)
 
 | Part | State |
 | --- | --- |
@@ -46,10 +46,12 @@ BantAI reads five public sources through Zetaris: `WEATHER`, `BULLETINS`, `HAZAR
 | Nemotron via Meterless | Working. Meterless Nightshift 1.2.7 on the host routes each call to Nemotron 3.5 Lightning and signs a receipt for it. Fast, but weaker than the direct route on multi-step questions |
 | OpenAI GPT | Built; needs `OPENAI_API_KEY` |
 | xAI Grok, Anthropic Claude | Keys set; both accounts need API credits |
-| Web app | Live on the host (port 3100, Tailscale for the team); accounts for every teammate |
+| Web app | Live at <https://itoolbox.taildc9975.ts.net>, private to the team through Tailscale; accounts for every teammate |
 
 **Docs:**
 
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md) is how teammates open IToolbox and BantAI through Tailscale.
+- [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) is how the host serves it: access, accounts, passwords and troubleshooting.
 - [docs/DEMO.md](docs/DEMO.md) is how to record and present the demo.
 - [docs/SUBMISSION.md](docs/SUBMISSION.md) holds the texts for the Open Agent Hackathon and the Zetaris Demo Challenge.
 
@@ -114,8 +116,9 @@ docker compose up -d                               # postgres :5435, api :8100
 | 3200 | BagyoAPI (PAGASA bulletins) | itoolbox-data-platform |
 | 8088 | Meterless Nightshift, if installed | the host |
 
-Every port binds to `127.0.0.1`. Teammates reach the API through Tailscale Serve
-on the host, not through the LAN.
+Every port binds to `127.0.0.1`. Tailscale Serve on the host publishes the web app,
+the API, Zetaris and JupyterLab to the team over HTTPS, never to the LAN or the
+public internet; [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) has the setup.
 
 The API container runs with `--reload` and `apps/api` bind-mounted, so edits take
 effect without a rebuild. Requirement changes need `docker compose up -d --build`.
@@ -132,8 +135,10 @@ effect without a rebuild. Requirement changes need `docker compose up -d --build
 ### Accounts
 
 There is no public sign-up. Sign in as the seeded super_admin, then create
-teammates' accounts with `POST /api/v1/admin/users` (roles: `admin`, `analyst`,
-`viewer`).
+teammates' accounts in the web app's Security Settings, or with
+`POST /api/v1/admin/users` (roles: `admin`, `analyst`, `viewer`). For someone who
+has forgotten their password, `docker exec -it itoolbox-api python reset_password.py`
+sets a new one.
 
 ---
 
