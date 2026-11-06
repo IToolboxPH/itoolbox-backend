@@ -36,7 +36,7 @@ _SOURCE = {"type": "string", "description": "Data source name, for example WEATH
 TOOL_SPECS: tuple[ToolSpec, ...] = (
     ToolSpec(
         "list_sources",
-        "List the data sources registered in Zetaris, with their descriptions and table counts.",
+        "List the connected data sources, with their descriptions and table counts.",
         _object({}, []),
     ),
     ToolSpec(
@@ -54,7 +54,7 @@ TOOL_SPECS: tuple[ToolSpec, ...] = (
     ),
     ToolSpec(
         "run_sql",
-        "Run one read-only Spark SQL query (SELECT, or WITH ... SELECT) through Zetaris. Reference "
+        "Run one read-only Spark SQL query (SELECT, or WITH ... SELECT). Reference "
         "tables as SOURCE.table, for example WEATHER.forecasts. The result gets an evidence id, like E3, "
         "that the answer must cite.",
         _object(

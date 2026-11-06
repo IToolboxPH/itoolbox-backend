@@ -52,8 +52,7 @@ BantAI reads five public sources through Zetaris: `WEATHER`, `BULLETINS`, `HAZAR
 
 - [docs/USER_GUIDE.md](docs/USER_GUIDE.md) is how teammates open IToolbox and BantAI through Tailscale.
 - [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) is how the host serves it: access, accounts, passwords and troubleshooting.
-- [docs/DEMO.md](docs/DEMO.md) is how to record and present the demo.
-- [docs/SUBMISSION.md](docs/SUBMISSION.md) holds the texts for the Open Agent Hackathon and the Zetaris Demo Challenge.
+- [docs/archive/hackathon-2026/](docs/archive/hackathon-2026/) keeps the 2026 hackathon texts and demo guide, for reference.
 
 ---
 

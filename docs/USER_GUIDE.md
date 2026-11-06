@@ -48,18 +48,19 @@ you use IToolbox.
 ## 3. Use BantAI
 
 - **Ask a question.** Open **BantAI** from the dashboard and ask in English or
-  Filipino, for example "Which areas had the highest wind signal in the latest
-  bulletin?"
-- **See why.** BantAI shows each step as it works: every query it runs through
-  Zetaris and the rows that came back. The answer cites them as E1, E2 and so on.
-  Open one to see its exact SQL and rows.
+  Filipino, about IToolbox or about the connected data, for example "What products
+  does IToolbox offer?" or "How many people live in Cebu province?" Today the data
+  covers Philippine places, population, facilities, weather and hazards.
+- **See the evidence.** For an answer from the data, BantAI shows each step as it
+  works: every query it runs and the rows that came back. The answer cites them as
+  E1, E2 and so on. Open one to see its exact SQL and rows.
 - **Wait for it.** An answer usually takes under a minute. Keep the page open
   until it's done.
 - **Pick a model.** Keep the default, **NVIDIA Nemotron**. **Nemotron via
   Meterless** works while the admin has Meterless running on the host. GPT, Grok
   and Claude need an API key or credits the team doesn't have yet.
 - **Find past questions** on the dashboard. A BantAI link ending in `?id=...`
-  replays an investigation exactly as it ran; anyone with an account can open it.
+  replays an investigation exactly as it ran; only you and the admins can open it.
 - **Browse the data.** **Data Sources**, under BantAI Strategic Intelligence,
   lists every source and table BantAI can query.
 - BantAI supports decisions. For life-safety calls, follow PAGASA, NDRRMC and your

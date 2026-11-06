@@ -72,10 +72,10 @@ app = FastAPI(
         "Backend for the IToolbox Ecosystem Platform.\n\n"
         "**Modules:**\n"
         "- **Auth / Admin**: local JWT sign-in; accounts are provisioned by an admin\n"
-        "- **Data Harness**: governed, read-only access to live data through the Zetaris platform "
-        "(sources, tables, columns, SELECT queries); nothing is copied out of the source databases\n"
-        "- **Agent (BantAI)**: answers questions from live data and explains why, citing the queries "
-        "behind every claim; Nemotron, Grok or Claude, picked per question\n\n"
+        "- **Data Harness**: governed, read-only access to live data (sources, tables, columns, "
+        "SELECT queries); nothing is copied out of the source databases\n"
+        "- **Agent (BantAI)**: IToolbox's AI assistant; answers questions about the platform and from "
+        "live data, citing the queries behind every claim; the model is picked per question\n\n"
         "**API route prefixes:** `/api/v1/auth` · `/api/v1/admin` · `/api/v1/harness` · `/api/v1/agent`"
     ),
     version=VERSION,
